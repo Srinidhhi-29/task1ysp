@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Count & File Upload</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Character Count and File Upload</h1>
+
+    <form id="charCountForm">
+      <label for="aboutMe">About Me (200 characters max):</label>
+      <textarea id="aboutMe" name="aboutMe" maxlength="200"></textarea>
+      <div id="charCount">200 characters remaining</div>
+
+      <label for="fileUpload">Profile Picture:</label>
+      <input type="file" id="fileUpload" name="fileUpload" accept="image/*" required>
+
+      <label for="captcha">Captcha: <span id="captchaText"></span></label>
+      <input type="text" id="captcha" name="captcha" required>
+      <button type="button" id="refreshCaptcha">Refresh CAPTCHA</button>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="resultMessage"></div>
+  </div>
+
+  <script>
+    const aboutMe = document.getElementById('aboutMe');
+    const charCount = document.getElementById('charCount');
+    const form = document.getElementById('charCountForm');
+    const resultMessage = document.getElementById('resultMessage');
+    const captchaText = document.getElementById('captchaText');
+    const captchaInput = document.getElementById('captcha');
+    const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
+
+    // Function to generate random CAPTCHA
+    function generateCaptcha() {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let captcha = '';
+      for (let i = 0; i < 6; i++) {
+        captcha += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      captchaText.innerText = captcha;
+    }
+
+    generateCaptcha();
+
+    refreshCaptchaBtn.addEventListener('click', generateCaptcha);
+
+    aboutMe.addEventListener('input', () => {
+      const remaining = 200 - aboutMe.value.length;
+      charCount.innerText = `${remaining} characters remaining`;
+    });
+
+    
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); 
+
+      const fileUpload = document.getElementById('fileUpload').files[0];
+      const aboutMeText = aboutMe.value;
+      const captchaValue = captchaInput.value;
+      if (captchaValue !== captchaText.innerText) {
+        generateCaptcha(); 
+        return;
+      }
+
+      if (!fileUpload) {
+        return;
+      }
+
+      if (aboutMeText.length === 0) {
+        return;
+      }
+
+      resultMessage.innerHTML = "<p class='success-message'>Registration successful!</p>";
+      form.reset();
+      charCount.innerText = '200 characters remaining';
+      generateCaptcha(); 
+      setTimeout(function() {
+        window.location.href = 'index.html'; 
+      }, 1000); 
+    });
+  </script>
+</body>
+</html>
